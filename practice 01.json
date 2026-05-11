@@ -1,0 +1,369 @@
+{
+  "name": "practice 01",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "QA",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "name"
+            },
+            {
+              "fieldLabel": "email"
+            },
+            {
+              "fieldLabel": "question"
+            },
+            {
+              "fieldLabel": "answer",
+              "fieldType": "textarea"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1d70fc7d-df6b-4716-b278-3b8381041d9d",
+      "name": "QA session",
+      "webhookId": "327e73ba-bb8b-4d62-add7-80f726f82ac1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "daab4de6-efd3-4808-a42c-2b78b0112856",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "@gmail.com",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "b0782b4c-0325-40eb-92e1-a69abaa9ec2e",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b1bac3f9-df94-478e-ac9d-dbd593875dd7",
+              "name": "is trused",
+              "value": true,
+              "type": "boolean"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        -96
+      ],
+      "id": "4700c11f-204c-4f01-bd61-e96096302da3",
+      "name": "is trused, T"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b1bac3f9-df94-478e-ac9d-dbd593875dd7",
+              "name": "is trused",
+              "value": false,
+              "type": "boolean"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        144
+      ],
+      "id": "d128bf39-0a51-4ea9-9987-44f701ea0403",
+      "name": "is trused, F"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        624,
+        16
+      ],
+      "id": "74b93b0c-60eb-4be9-a2e3-1571d3e45b76",
+      "name": "ref"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        832,
+        224
+      ],
+      "id": "12a43bc1-6aa0-4b8c-b5f5-cae84783e150",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ANmlvN1CV3bZkSHR",
+          "name": "AI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analize the question and answer , out put the relavent text if the answer is correct or not . if not then reply the correct answer\n\nquestion: {{ $json.question }}\nanswer: {{ $json.answer }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are a strict exam checker.\nOnly reply with Correct or Incorrect.\nIf incorrect then correct the answre.\nDo not explain anything.\nigore the spelling mistakes\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        832,
+        16
+      ],
+      "id": "97e1c82e-bd5b-407a-90db-5c7a46294e70",
+      "name": "add tags"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ChqZUpl4CnXLLynA2Pn0zOB1koAD-XTN-mhnIi_Zr1g",
+          "mode": "list",
+          "cachedResultName": "practice project",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ChqZUpl4CnXLLynA2Pn0zOB1koAD-XTN-mhnIi_Zr1g/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ChqZUpl4CnXLLynA2Pn0zOB1koAD-XTN-mhnIi_Zr1g/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Names ": "={{ $('ref').item.json.name }}",
+            "Emails": "={{ $('ref').item.json.email }}",
+            "Question": "={{ $('ref').item.json.question }}",
+            "Answer": "={{ $('ref').item.json.answer }}",
+            "Correct Ans": "={{ $json.text }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Names ",
+              "displayName": "Names ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Emails",
+              "displayName": "Emails",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Question",
+              "displayName": "Question",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Answer",
+              "displayName": "Answer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Correct Ans",
+              "displayName": "Correct Ans",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1184,
+        16
+      ],
+      "id": "ee6aa5c3-0edf-4c25-affd-607ed54613e3",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "L7i5RaOIPWZK5mjc",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "QA session": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "is trused, T",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "is trused, F",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is trused, T": {
+      "main": [
+        [
+          {
+            "node": "ref",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is trused, F": {
+      "main": [
+        [
+          {
+            "node": "ref",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ref": {
+      "main": [
+        [
+          {
+            "node": "add tags",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "add tags",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "add tags": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "efbae751-8b82-439f-a7fa-95359aaba21c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3603581cf4949af6482e06b15108004fdbd6400dc73486716ad5c79575e87755"
+  },
+  "id": "F0cpJnGv9AZdo545",
+  "tags": []
+}
