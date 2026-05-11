@@ -20,7 +20,3 @@ Automated Q&A checker that evaluates answers using AI and logs results to Google
 3. Connect your Google Sheets account
 4. Activate the workflow
 5. Share the generated form webhook URL
-
-## Workflow Screenshot
-
-![Workflow Screenshot](workflow.png)
